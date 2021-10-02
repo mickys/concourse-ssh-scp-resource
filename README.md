@@ -9,12 +9,11 @@ All items are required, and go under the `source` key:
 * `private_key`:  Private key for `user`
 
 ## Behavior
-
 * `check`: Not implemented
 * `get`: Not implemented
 * `put`: Run a command or copy a file to the configured `user@host`
 
-To copy files, add the`files` key to `params`, and under it, give the source as a key and destination as value for each file or directory. It is recommended to quote both the source and destination to avoid any YAML parsing surprises. The source directory should be an `output` name from a previous build step.
+To copy files, add the `files` key to `params`, and under it, give the source as a key and destination as value for each file or directory. It is recommended to quote both the source and destination to avoid any YAML parsing surprises. The source directory should be an `output` name from a previous build step.
 
 ```yaml
  params:
@@ -23,24 +22,27 @@ To copy files, add the`files` key to `params`, and under it, give the source as 
      "outfiles/page.html": "/var/www/public_html/page.html"
  ```
  
-To run commands, add the `commands` key to `params`, and under that, give the commands to run as list items (prefixed with a `-`). Again, quotes are recommended to avoid YAML surprises.
+To run commands, add the `commands` key to `params`, and under that, give the commands to run as list items (prefixed with a `-`). Again, quotes are recommended to avoid YAML surprises. Note that all commands run in a `&&` chain from top to bottom, so failure or a nonzero exit of any command will result in all later commands on this step not executing.
 
 ```yaml
 params:
   commands:
-    - 'ls /var/www/public_html`
-    - `free -m`
+    - "ls /var/www/public_html"
+    - "free -m"
+    - "/bin/false"
+    - "/bin/true"  # Will not run
 ```
 
-You may copy files and run commands as part of the same step. Note that file copies will always be run first.
+You may copy files and run commands as part of the same step. **Note that file copies will always be run first**.
+
 ```yaml
 params:
   files:
-     "outfiles/index.html": "/var/www/public_html/index.html"
-     "outfiles/page.html": "/var/www/public_html/page.html"
+     "outfiles/main.py": "/var/www/public_html/main.py"
   commands:
     - 'ls /var/www/public_html`
     - `md5sum /var/www/public_html/*`
+    - `systemctl restart nginx`
 ```
 
 ## Installation
@@ -64,6 +66,6 @@ resources:
     host: mywebserver.com
     private_key: |
       -----BEGIN OPENSSH PRIVATE KEY-----
-      # redacted
+      redacted
       -----END OPENSSH PRIVATE KEY-----
 ```
