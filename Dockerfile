@@ -1,6 +1,5 @@
 FROM python:3.6.3-alpine3.6
 
-RUN apk update && \
-    apk add openssh
+RUN apk add --no-cache openssh
 
 COPY src/* /opt/resource/
