@@ -49,10 +49,9 @@ params:
 Add a new resource type to your pipeline:
 ```yaml
 resource_types:
-#
 - name: ssh-scp
   type: registry-image
-  source: { repository: karunamon/concourse-ssh-scp-resource }
+  source: { repository: ghcr.io/karunamon/ssh-scp-resource }
 ```
 
 Then, define a resource targeting the system you want to run commands on or copy files to:
@@ -66,6 +65,6 @@ resources:
     host: mywebserver.com
     private_key: |
       -----BEGIN OPENSSH PRIVATE KEY-----
-      redacted
+      ...
       -----END OPENSSH PRIVATE KEY-----
 ```
