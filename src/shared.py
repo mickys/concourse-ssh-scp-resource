@@ -29,13 +29,13 @@ def write_private_key(path, private_key):
 
     return private_key_path
 
-def scpTo(user, host, private_key_path, path, files):
-    return _scp(user, host, private_key_path, path, files, True)
+def scpTo(user, host, port, private_key_path, path, files):
+    return _scp(user, host, port, private_key_path, path, files, True)
 
-def scpFrom(user, host, private_key_path, path, files):
-    return _scp(user, host, private_key_path, path, files, False)
+def scpFrom(user, host, port, private_key_path, path, files):
+    return _scp(user, host, port, private_key_path, path, files, False)
 
-def _scp(user, host, private_key_path, path, files, toRemote):
+def _scp(user, host, port, private_key_path, path, files, toRemote):
     if not isinstance(files, dict):
         raise ValueError("Expected 'files' to be a dict, found %s" % type(files).__name__)
 
@@ -44,7 +44,7 @@ def _scp(user, host, private_key_path, path, files, toRemote):
         destination = "%s@%s:%s" % (user, host, destination_file) if toRemote else "%s/%s" % (path, destination_file)
 
         print(f"{source} -> {destination}")
-        proc = subprocess.run(["scp", "-oStrictHostKeyChecking=no", "-i", private_key_path,"-r", source, destination]
+        proc = subprocess.run(["scp", "-oStrictHostKeyChecking=no", "-i", private_key_path,"-r", source, destination, "-P", port]
                             , check=True
                             , stdout=subprocess.PIPE)
         eprint(proc.stdout.decode("utf-8"))
@@ -54,7 +54,7 @@ def sshRun(user, host, private_key_path, commands):
         raise ValueError("Expected 'commands' to be a list, found %s" % type(commands).__name__)
     
     print(commands)
-    proc = subprocess.run(["ssh", "-oStrictHostKeyChecking=no", "-i", private_key_path, "%s@%s" % (user, host), "%s" % " && ".join(commands)]
+    proc = subprocess.run(["ssh", "-oStrictHostKeyChecking=no", "-i", private_key_path, "%s@%s" % (user, host), "-p", port, "%s" % " && ".join(commands)]
                         , check=True
                         , stdout=subprocess.PIPE)
     eprint(proc.stdout.decode("utf-8"))

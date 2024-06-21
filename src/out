@@ -13,6 +13,7 @@ config_schema = {
     "source": {
         "user": "",
         "host": "",
+        "port": "",
         "private_key": ""
     },
     "params": {}
@@ -22,16 +23,17 @@ def main(path, config):
     validate_schema(config, config_schema)
     user = config["source"]["user"]
     host = config["source"]["host"]
+    port = config["source"]["port"]
     private_key = config["source"]["private_key"]
     params = config["params"]
 
     private_key_path = write_private_key(path, private_key)
 
     if "files" in params:
-        scpTo(user, host, private_key_path, path, params["files"])
+        scpTo(user, host, port, private_key_path, path, params["files"])
 
     if "commands" in params:
-        sshRun(user, host, private_key_path, params["commands"])
+        sshRun(user, host, port, private_key_path, params["commands"])
 
 path = sys.argv[1]
 config = json.loads(sys.stdin.read())

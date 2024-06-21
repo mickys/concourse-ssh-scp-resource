@@ -6,6 +6,7 @@ All items are required, and go under the `source` key:
 
 * `user`: SSH username
 * `host`: Host to log into
+* `port`: Host Port
 * `private_key`:  Private key for `user`
 
 ## Behavior
@@ -63,6 +64,7 @@ resources:
   source:
     user: someuser
     host: mywebserver.com
+    port: 22
     private_key: |
       -----BEGIN OPENSSH PRIVATE KEY-----
       ...
