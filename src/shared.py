@@ -44,9 +44,9 @@ def _scp(user, host, port, private_key_path, path, files, toRemote):
         destination = "%s@%s:%s" % (user, host, destination_file) if toRemote else "%s/%s" % (path, destination_file)
 
         print(f"{source} -> {destination}")
-        proc = subprocess.run(["scp", "-oStrictHostKeyChecking=no", "-P", port, "-i", private_key_path, "-r", source, destination]
-                            , check=True
-                            , stdout=subprocess.PIPE)
+        cmd = ["scp", "-oStrictHostKeyChecking=no", "-i", private_key_path, "-P", port, "-r", source, destination]
+        print(" ".join(cmd))
+        proc = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
         eprint(proc.stdout.decode("utf-8"))
 
 def sshRun(user, host, port, private_key_path, commands):
@@ -54,7 +54,7 @@ def sshRun(user, host, port, private_key_path, commands):
         raise ValueError("Expected 'commands' to be a list, found %s" % type(commands).__name__)
     
     print(commands)
-    proc = subprocess.run(["ssh", "-oStrictHostKeyChecking=no", "-p", port, "-i", private_key_path, "%s@%s" % (user, host), "%s" % " && ".join(commands)]
-                        , check=True
-                        , stdout=subprocess.PIPE)
+    cmd = ["ssh", "-oStrictHostKeyChecking=no", "-i", private_key_path, "%s@%s" % (user, host), "-p", port, "%s" % " && ".join(commands)]
+    print(" ".join(cmd))
+    proc = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
     eprint(proc.stdout.decode("utf-8"))
